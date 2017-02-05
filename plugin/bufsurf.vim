@@ -29,6 +29,10 @@ let s:disabled = 0
 
 " Open the previous buffer in the navigation history for the current window.
 function s:BufSurfBack()
+    if !exists('w:history_index')
+        let w:history_index = 0
+    endif
+
     if w:history_index > 0
         let w:history_index -= 1
         let s:disabled = 1
@@ -41,6 +45,9 @@ endfunction
 
 " Open the next buffer in the navigation history for the current window.
 function s:BufSurfForward()
+    if !exists('w:history_index')
+        let w:history_index = 0
+    endif
     if w:history_index < len(w:history) - 1
         let w:history_index += 1
         let s:disabled = 1
@@ -117,6 +124,11 @@ endfunction
 function s:BufSurfIsDisabled(bufnr)
     if s:disabled
         return 1
+    endif
+
+    " Ignore blank (empty buffers)
+    if bufname(a:bufnr) == ''
+      return 1
     endif
 
     for bufpattern in s:ignore_buffers
